@@ -34,6 +34,12 @@ class Engine:
                 yield database.DatabaseOpenedEvent(path)
             except:
                 yield database.DatabaseOpenFailedEvent
+        elif isinstance(event, app.QuitInitiatedEvent):
+            try:
+                yield app.EndApplicationEvent()
+            except:
+                error = app.ErrorEvent('Cannot quit right now')
+                yield error
 
 
 
