@@ -11,20 +11,7 @@ import p2app.events.database as database
 import p2app.events.app as app
 import p2app.events.continents as continents
 import sqlite3
-
-def search_continents(connection, event):
-    search_name = event._name
-    search_continent = event._continent_code
-    if search_name is not None and search_continent is not None:
-        query = f'SELECT * FROM continent WHERE "{search_name}" = name AND "{search_continent}" = continent_code;'
-    elif search_name is None and search_continent is not None:
-        query = f'SELECT * FROM continent WHERE "{search_continent}" = continent_code;'
-    elif search_name is not None and search_continent is None:
-        query = f'SELECT * FROM continent WHERE "{search_name}" = name;'
-    cursor = connection.execute(query)
-    results = cursor.fetchall()
-    cursor.close()
-    return results
+import continent_events
 
 
     # Send ContinentSearchResultEvents for each continent found
@@ -68,7 +55,7 @@ class Engine:
                 yield error
         elif isinstance(event, continents.StartContinentSearchEvent):
             try:
-                results = search_continents(self._conn, event)
+                results = continent_events.search_continents(self._conn, event)
                 for result in results:
                     continent = continents.Continent(*result)
                     yield continents.ContinentSearchResultEvent(continent)
