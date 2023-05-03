@@ -12,6 +12,19 @@ import p2app.events.app as app
 import p2app.events.continents as continents
 import sqlite3
 
+def search_continents(connection, event):
+
+    search_name = event._name
+    search_continent = event._continent_code
+    query = f'SELECT * FROM continent WHERE "{search_name}" = name AND "{search_continent}" = continent_code;'
+    cursor = connection.execute(query)
+    results = cursor.fetchall()
+    cursor.close()
+    print(results)
+    return results
+
+
+    # Send ContinentSearchResultEvents for each continent found
 class Engine:
     """An object that represents the application's engine, whose main role is to
     process events sent to it by the user interface, then generate events that are
@@ -21,7 +34,8 @@ class Engine:
 
     def __init__(self):
         """Initializes the engine"""
-        pass
+        self._conn = sqlite3.connect('user', isolation_level = None)
+        self.path = None
 
 
     def process_event(self, event):
@@ -30,8 +44,11 @@ class Engine:
         if isinstance(event, database.OpenDatabaseEvent):
             try:
                 path = event._path
-                sqlite3.connect(path, isolation_level = None)
-                yield database.DatabaseOpenedEvent(path)
+                self.path = event._path
+                self._conn = sqlite3.connect(path, isolation_level = None)
+                cursor = self._conn.execute('PRAGMA foreign_keys = ON;')
+                cursor.close()
+                yield database.DatabaseOpenedEvent(self.path)
             except:
                 yield database.DatabaseOpenFailedEvent
         elif isinstance(event, app.QuitInitiatedEvent):
@@ -46,7 +63,15 @@ class Engine:
             except:
                 error = app.ErrorEvent('Cannot close right now')
                 yield error
-
+        elif isinstance(event, continents.StartContinentSearchEvent):
+            try:
+                results = search_continents(self._conn, event)
+                for result in results:
+                    continent = continents.Continent(*result)
+                    yield continents.ContinentSearchResultEvent(continent)
+            except:
+                error = app.ErrorEvent('No continents that match')
+                yield error
 
 
 
