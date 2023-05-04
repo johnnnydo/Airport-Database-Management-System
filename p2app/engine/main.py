@@ -11,7 +11,8 @@ import p2app.events.database as database
 import p2app.events.app as app
 import p2app.events.continents as continents
 import sqlite3
-import continent_events
+import p2app.engine.continent_events as continent_events
+
 
 
     # Send ContinentSearchResultEvents for each continent found
@@ -62,7 +63,15 @@ class Engine:
             except:
                 error = app.ErrorEvent('No continents that match')
                 yield error
-
+        elif isinstance(event, continents.LoadContinentEvent):
+            try:
+                results = continent_events.load_continents(self._conn, event)
+                for result in results:
+                    continent = continents.Continent(*result)
+                    yield continents.ContinentLoadedEvent(continent)
+            except:
+                error = app.ErrorEvent('Cannot Load the continent')
+                yield error
 
 
         # This is a way to write a generator function that always yields zero values.

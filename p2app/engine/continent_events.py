@@ -15,3 +15,10 @@ def search_continents(connection, event):
     results = cursor.fetchall()
     cursor.close()
     return results
+
+def load_continents(connection, event):
+    continent_id = event._continent_id
+    query = f'SELECT * FROM continent WHERE "{continent_id}" = continent_id'
+    cursor = connection.execute(query)
+    results = cursor.fetchall()
+    return results
