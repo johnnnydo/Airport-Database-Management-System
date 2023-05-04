@@ -1,5 +1,7 @@
 # p2app/engine/main.py
-#
+#created by Johnny Do
+#johnnyhd@uci.edu
+#46849652
 # ICS 33 Spring 2023
 # Project 2: Learning to Fly
 #
