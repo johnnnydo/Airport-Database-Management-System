@@ -17,6 +17,7 @@ def search_continents(connection, event):
         query = f'SELECT * FROM continent WHERE "{search_name}" = name;'
     cursor = connection.execute(query)
     results = cursor.fetchall()
+
     cursor.close()
     return results
 
