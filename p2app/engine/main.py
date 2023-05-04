@@ -14,6 +14,7 @@ import p2app.events.app as app
 import p2app.events.continents as continents
 import sqlite3
 import p2app.engine.continent_events as continent_events
+import os
 
 
 
@@ -38,12 +39,17 @@ class Engine:
             try:
                 path = event._path
                 self.path = event._path
-                self._conn = sqlite3.connect(path, isolation_level = None)
-                cursor = self._conn.execute('PRAGMA foreign_keys = ON;')
-                cursor.close()
-                yield database.DatabaseOpenedEvent(self.path)
+                file_extension = os.path.splitext(path)[1]
+                if file_extension != '.db':
+                    yield database.DatabaseOpenFailedEvent('This is not a .db or database file')
+                else:
+
+                    self._conn = sqlite3.connect(path, isolation_level = None)
+                    cursor = self._conn.execute('PRAGMA foreign_keys = ON;')
+                    cursor.close()
+                    yield database.DatabaseOpenedEvent(self.path)
             except:
-                yield database.DatabaseOpenFailedEvent
+                yield database.DatabaseOpenFailedEvent('This is not a .db or database file')
         elif isinstance(event, app.QuitInitiatedEvent):
             try:
                 yield app.EndApplicationEvent()
