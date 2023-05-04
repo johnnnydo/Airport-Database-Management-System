@@ -78,6 +78,13 @@ class Engine:
                 yield continents.ContinentSavedEvent(new_cont)
             except:
                 yield continents.SaveContinentFailedEvent('Check your continent code it has to be unique')
+        elif isinstance(event, continents.SaveContinentEvent):
+            try:
+                save_cont = continent_events.edited_continent(self._conn, event)
+                yield continents.ContinentSavedEvent(save_cont)
+            except:
+                yield continents.SaveContinentFailedEvent(
+                    'Check your continent code it has to be unique')
 
 
         # This is a way to write a generator function that always yields zero values.

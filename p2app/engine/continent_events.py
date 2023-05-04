@@ -35,3 +35,17 @@ def new_continent(connection, event):
         cont_code = ''
     cursor = connection.execute('INSERT INTO continent (continent_id, continent_code, name) VALUES(?, ?, ?);', (cont_id, cont_code, cont_name))
     return cont_namet
+
+def edited_continent(connection, event):
+    cont_namet = event._continent
+    cont_code = cont_namet.continent_code
+    cont_name = cont_namet.name
+    cont_id = cont_namet.continent_id
+    if cont_name is None:
+        cont_name = ''
+    elif cont_code is None:
+        cont_code = ''
+    query = f'UPDATE continent SET continent_code = "{cont_code}", name = "{cont_name}" WHERE continent_id = {cont_id};'
+    cursor = connection.execute(query)
+    return cont_namet
+
