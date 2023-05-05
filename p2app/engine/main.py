@@ -109,6 +109,12 @@ class Engine:
             except:
                 error = app.ErrorEvent('Cannot Load the Country')
                 yield error
+        elif isinstance(event, countries.SaveNewCountryEvent):
+            try:
+                results = country_events.new_country(self._conn, event)
+                yield countries.CountrySavedEvent(results)
+            except:
+                yield countries.SaveCountryFailedEvent('Your country code must be unique.')
 
 
 

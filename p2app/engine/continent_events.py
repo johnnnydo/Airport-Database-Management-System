@@ -25,7 +25,7 @@ def load_continents(connection, event):
     '''This function is going to use select to load
     a existing continent if the user wants to edit it'''
     continent_id = event._continent_id
-    query = f'SELECT * FROM continent WHERE "{continent_id}" = continent_id'
+    query = f'SELECT * FROM continent WHERE "{continent_id}" = continent_id;'
     cursor = connection.execute(query)
     results = cursor.fetchall()
     return results

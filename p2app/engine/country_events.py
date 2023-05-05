@@ -28,4 +28,33 @@ def load_country(connection, event):
     results = cursor.fetchall()
     return results
 
+def new_country(connection, event):
+    '''This function is going to allow the user to
+    save a new country.'''
+    country_namet = event._country
+    country_id = country_namet.country_id
+    country_code = country_namet.country_code
+    country_name = country_namet.name
+    continent_id = country_namet.continent_id
+    country_wiki = country_namet.wikipedia_link
+    country_keywords = country_namet.keywords
+    if country_code is None:
+        country_code = ''
+    elif country_name is None:
+        country_name = ''
+    elif continent_id is None:
+        continent_id = ''
+    elif continent_id is None:
+        continent_id = ''
+    elif country_wiki is None:
+        country_wiki = ''
+    if country_keywords is None:
+        cursor = connection.execute('INSERT INTO country(country_id, country_code, name, continent_id, wikipedia_link, keywords) VALUES(?, ?, ?, ?, ?, NULL);', (country_id, country_code, country_name, continent_id, country_wiki))
+    elif country_keywords is not None:
+        cursor = connection.execute(
+            'INSERT INTO country(country_id, country_code, name, continent_id, wikipedia_link, keywords) VALUES(?, ?, ?, ?, ?, ?);',
+            (country_id, country_code, country_name, continent_id, country_wiki, country_keywords))
+
+    return country_namet
+
 
