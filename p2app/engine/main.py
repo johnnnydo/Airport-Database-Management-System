@@ -115,6 +115,12 @@ class Engine:
                 yield countries.CountrySavedEvent(results)
             except:
                 yield countries.SaveCountryFailedEvent('Your country code must be unique.')
+        elif isinstance(event, countries.SaveCountryEvent):
+            try:
+                edit_country = country_events.edited_country(self._conn, event)
+                yield countries.CountrySavedEvent(edit_country)
+            except:
+                yield countries.SaveCountryFailedEvent('Your country code must be unique.')
 
 
 

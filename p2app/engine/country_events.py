@@ -23,7 +23,7 @@ def load_country(connection, event):
     '''This function is going to use SELECT to load
     a existing country if the user wants to edit it'''
     country_id = event._country_id
-    query = f'SELECT * FROM country WHERE "{country_id} = country_id";'
+    query = f'SELECT * FROM country WHERE {country_id} = country_id;'
     cursor = connection.execute(query)
     results = cursor.fetchall()
     return results
@@ -57,4 +57,28 @@ def new_country(connection, event):
 
     return country_namet
 
-
+def edited_country(connection, event):
+    country_namet = event._country
+    country_id = country_namet.country_id
+    country_code = country_namet.country_code
+    country_name = country_namet.name
+    continent_id = country_namet.continent_id
+    country_wiki = country_namet.wikipedia_link
+    country_keywords = country_namet.keywords
+    if country_code is None:
+        country_code = ''
+    elif country_name is None:
+        country_name = ''
+    elif continent_id is None:
+        continent_id = ''
+    elif continent_id is None:
+        continent_id = ''
+    elif country_wiki is None:
+        country_wiki = ''
+    if country_keywords is not None:
+        query = f'UPDATE country SET country_code = "{country_code}", name = "{country_name}", continent_id = {continent_id}, wikipedia_link = "{country_wiki}", keywords = "{country_keywords}" WHERE country_id = {country_id};'
+        cursor = connection.execute(query)
+    elif country_keywords is None:
+        query = f'UPDATE country SET country_code = "{country_code}", name = "{country_name}", continent_id = {continent_id}, wikipedia_link = "{country_wiki}", keywords = NULL WHERE country_id = {country_id};'
+        cursor = connection.execute(query)
+    return country_namet
