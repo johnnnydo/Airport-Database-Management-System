@@ -100,6 +100,16 @@ class Engine:
                 country = countries.Country(*result)
                 yield countries.CountrySearchResultEvent(country)
 
+        elif isinstance(event, countries.LoadCountryEvent):
+            try:
+                results = country_events.load_country(self._conn, event)
+                for result in results:
+                    country = countries.Country(*result)
+                    yield countries.CountryLoadedEvent(country)
+            except:
+                error = app.ErrorEvent('Cannot Load the Country')
+                yield error
+
 
 
         # This is a way to write a generator function that always yields zero values.
