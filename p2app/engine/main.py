@@ -63,6 +63,8 @@ class Engine:
             except:
                 error = app.ErrorEvent('Cannot close right now')
                 yield error
+
+        #begin continents events
         elif isinstance(event, continents.StartContinentSearchEvent):
             try:
                 results = continent_events.search_continents(self._conn, event)
@@ -94,6 +96,8 @@ class Engine:
             except:
                 yield continents.SaveContinentFailedEvent(
                     'Check your continent code it has to be unique')
+
+        #begin country events
         elif isinstance(event, countries.StartCountrySearchEvent):
             results = country_events.search_country(self._conn, event)
             for result in results:
@@ -121,6 +125,8 @@ class Engine:
                 yield countries.CountrySavedEvent(edit_country)
             except:
                 yield countries.SaveCountryFailedEvent('Your country code must be unique.')
+
+        #begin region events
 
 
 

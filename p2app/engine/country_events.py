@@ -58,6 +58,8 @@ def new_country(connection, event):
     return country_namet
 
 def edited_country(connection, event):
+    '''This function is going to allow the user to edit
+    a loaded country'''
     country_namet = event._country
     country_id = country_namet.country_id
     country_code = country_namet.country_code
