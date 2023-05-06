@@ -123,7 +123,7 @@ class Engine:
                 results = country_events.new_country(self._conn, event)
                 yield countries.CountrySavedEvent(results)
             except:
-                yield countries.SaveCountryFailedEvent('Your country code must be unique.')
+                yield countries.SaveCountryFailedEvent('Your country code must be unique or your continent id must be an integer.')
         elif isinstance(event, countries.SaveCountryEvent):
             try:
                 edit_country = country_events.edited_country(self._conn, event)
@@ -146,6 +146,13 @@ class Engine:
             except:
                 error = app.ErrorEvent('Cannot Load the region')
                 yield error
+        elif isinstance(event, regions.SaveNewRegionEvent):
+
+            try:
+                results = region_events.new_region(self._conn, event)
+                yield regions.RegionSavedEvent(results)
+            except:
+                yield regions.SaveRegionFailedEvent('Your region_code must be unique. Or Continent id and country id must be integers')
 
 
 
