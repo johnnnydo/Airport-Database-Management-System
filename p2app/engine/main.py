@@ -15,8 +15,10 @@ import p2app.events.continents as continents
 import p2app.events.countries as countries
 import sqlite3
 import p2app.engine.continent_events as continent_events
+import p2app.events.regions as regions
 import os
 import p2app.engine.country_events as country_events
+import p2app.engine.region_events as region_events
 
 
     # Send ContinentSearchResultEvents for each continent found
@@ -127,6 +129,11 @@ class Engine:
                 yield countries.SaveCountryFailedEvent('Your country code must be unique.')
 
         #begin region events
+        elif isinstance(event, regions.StartRegionSearchEvent):
+            results = region_events.search_regions(self._conn, event)
+            for result in results:
+                region = regions.Region(*result)
+                yield regions.RegionSearchResultEvent(region)
 
 
 
