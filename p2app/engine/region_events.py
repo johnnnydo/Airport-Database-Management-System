@@ -27,6 +27,16 @@ def search_regions(connection, event):
     cursor.close()
     return results
 
+def load_region(connection, event):
+    '''This function is going to allow the user to load
+    a region to edit'''
+    region_id = event._region_id
+    query = f'SELECT * FROM region WHERE {region_id} = region_id;'
+    cursor = connection.execute(query)
+    results = cursor.fetchall()
+    return results
+
+
 
 
 

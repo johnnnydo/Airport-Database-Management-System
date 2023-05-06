@@ -134,6 +134,15 @@ class Engine:
             for result in results:
                 region = regions.Region(*result)
                 yield regions.RegionSearchResultEvent(region)
+        elif isinstance(event, regions.LoadRegionEvent):
+            try:
+                results = region_events.load_region(self._conn, event)
+                for result in results:
+                    region = regions.Region(*result)
+                    yield regions.RegionLoadedEvent(region)
+            except:
+                error = app.ErrorEvent('Cannot Load the region')
+                yield error
 
 
 
