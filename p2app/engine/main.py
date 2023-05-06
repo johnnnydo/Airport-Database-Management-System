@@ -19,7 +19,7 @@ import p2app.events.regions as regions
 import os
 import p2app.engine.country_events as country_events
 import p2app.engine.region_events as region_events
-
+import pathlib
 
     # Send ContinentSearchResultEvents for each continent found
 class Engine:
@@ -43,8 +43,11 @@ class Engine:
                 path = event._path
                 self.path = event._path
                 file_extension = os.path.splitext(path)[1]
+                file_name = pathlib.Path(path).name
                 if file_extension != '.db':
                     yield database.DatabaseOpenFailedEvent('This is not a .db or database file')
+                elif file_extension == '.db' and file_name != 'airport.db':
+                    yield database.DatabaseOpenFailedEvent('This is not the correct database')
                 else:
 
                     self._conn = sqlite3.connect(path, isolation_level = None)
