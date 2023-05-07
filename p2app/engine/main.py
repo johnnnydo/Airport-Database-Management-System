@@ -49,7 +49,6 @@ class Engine:
                 elif file_extension == '.db' and file_name != 'airport.db':
                     yield database.DatabaseOpenFailedEvent('This is not the correct database')
                 else:
-
                     self._conn = sqlite3.connect(path, isolation_level = None)
                     cursor = self._conn.execute('PRAGMA foreign_keys = ON;')
                     cursor.close()
@@ -108,7 +107,6 @@ class Engine:
             for result in results:
                 country = countries.Country(*result)
                 yield countries.CountrySearchResultEvent(country)
-
         elif isinstance(event, countries.LoadCountryEvent):
             try:
                 results = country_events.load_country(self._conn, event)
@@ -161,10 +159,4 @@ class Engine:
             except:
                 yield regions.SaveRegionFailedEvent('Your region_code must be unique. Or Continent id and country id must be integers')
 
-
-
-
-        # This is a way to write a generator function that always yields zero values.
-        # You'll want to remove this and replace it with your own code, once you start
-        # writing your engine, but this at least allows the program to run.
 
