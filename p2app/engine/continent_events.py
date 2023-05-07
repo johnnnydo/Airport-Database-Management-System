@@ -10,12 +10,15 @@ def search_continents(connection, event):
     search_name = event._name
     search_continent = event._continent_code
     if search_name is not None and search_continent is not None:
-        query = f'SELECT * FROM continent WHERE "{search_name}" = name AND "{search_continent}" = continent_code;'
+        query = 'SELECT * FROM continent WHERE name = ? AND continent_code = ?'
+        params = (search_name, search_continent)
     elif search_name is None and search_continent is not None:
-        query = f'SELECT * FROM continent WHERE "{search_continent}" = continent_code;'
+        query = 'SELECT * FROM continent WHERE continent_code = ?'
+        params = (search_continent,)
     elif search_name is not None and search_continent is None:
-        query = f'SELECT * FROM continent WHERE "{search_name}" = name;'
-    cursor = connection.execute(query)
+        query = 'SELECT * FROM continent WHERE name = ?'
+        params = (search_name,)
+    cursor = connection.execute(query, params)
     results = cursor.fetchall()
 
     cursor.close()
@@ -25,8 +28,10 @@ def load_continents(connection, event):
     '''This function is going to use select to load
     a existing continent if the user wants to edit it'''
     continent_id = event._continent_id
-    query = f'SELECT * FROM continent WHERE "{continent_id}" = continent_id;'
-    cursor = connection.execute(query)
+    query = 'SELECT * FROM continent WHERE continent_id = ?'
+    params = (continent_id,)
+
+    cursor = connection.execute(query, params)
     results = cursor.fetchall()
     return results
 
@@ -53,7 +58,10 @@ def edited_continent(connection, event):
         cont_name = ''
     elif cont_code is None:
         cont_code = ''
-    query = f'UPDATE continent SET continent_code = "{cont_code}", name = "{cont_name}" WHERE continent_id = {cont_id};'
-    cursor = connection.execute(query)
+
+    query = 'UPDATE continent SET continent_code=?, name=? WHERE continent_id=?'
+    params = (cont_code, cont_name, cont_id)
+
+    connection.execute(query, params)
     return cont_namet
 

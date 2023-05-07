@@ -3,7 +3,11 @@
 #46849652
 '''This module is going to hold the region event related functions'''
 import sqlite3
+
+
 def search_regions(connection, event):
+    '''This function is going to allow the search feature
+    to work for regions'''
     region_name = event._name
     region_code = event._region_code
     local_code = event._local_code
@@ -27,6 +31,7 @@ def search_regions(connection, event):
     cursor.close()
     return results
 
+
 def load_region(connection, event):
     '''This function is going to allow the user to load
     a region to edit'''
@@ -36,7 +41,10 @@ def load_region(connection, event):
     results = cursor.fetchall()
     return results
 
+
 def new_region(connection, event):
+    '''This function is going to allow the user to create a
+    new region'''
     region_namet = event._region
     region_id = region_namet.region_id
     region_code = region_namet.region_code
@@ -67,6 +75,42 @@ def new_region(connection, event):
         cursor = connection.execute('INSERT INTO region(region_id, region_code, local_code, name, continent_id, country_id, wikipedia_link, keywords) VALUES(?, ?, ?, ?, ?, ?, ?, ?);', (region_id, region_code, local_code, region_name, continent_id, country_id, region_wiki, region_keywords))
 
     return region_namet
+
+
+def edit_region(connection, event):
+    '''This function is going to allow the user to edit
+    a exisitng region'''
+    region_namet = event._region
+    region_id = region_namet.region_id
+    region_code = region_namet.region_code
+    local_code = region_namet.local_code
+    region_name = region_namet.name
+    continent_id = region_namet.continent_id
+    country_id = region_namet.country_id
+    region_wiki = region_namet.wikipedia_link
+    region_keywords = region_namet.keywords
+
+    if region_code is None:
+        region_code = ''
+    elif local_code is None:
+        local_code = ''
+    elif region_name is None:
+        region_name = ''
+    elif continent_id is None:
+        continent_id = ''
+    elif country_id is None:
+        country_id = ''
+    if region_wiki is None and region_keywords is None:
+        cursor = connection.execute(f'UPDATE region SET region_code = "{region_code}", local_code = "{local_code}", name = "{region_name}", continent_id = {continent_id}, country_id = {country_id}, wikipedia_link = NULL, keywords = NULL WHERE {region_id} = region_id;')
+    elif region_wiki is None and region_keywords is not None:
+        cursor = connection.execute(f'UPDATE region SET region_code = "{region_code}", local_code = "{local_code}", name = "{region_name}", continent_id = {continent_id}, country_id = {country_id}, wikipedia_link = NULL, keywords = "{region_keywords}" WHERE {region_id} = region_id;')
+    elif region_wiki is not None and region_keywords is None:
+        cursor = connection.execute(f'UPDATE region SET region_code = "{region_code}", local_code = "{local_code}", name = "{region_name}", continent_id = {continent_id}, country_id = {country_id}, wikipedia_link = "{region_wiki}", keywords = NULL WHERE {region_id} = region_id;')
+    elif region_wiki is not None and region_keywords is not None:
+        cursor = connection.execute(f'UPDATE region SET region_code = "{region_code}", local_code = "{local_code}", name = "{region_name}", continent_id = {continent_id}, country_id = {country_id}, wikipedia_link = "{region_wiki}", keywords = "{region_keywords}" WHERE {region_id} = region_id;')
+    return region_namet
+
+
 
 
 

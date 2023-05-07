@@ -153,6 +153,14 @@ class Engine:
                 yield regions.RegionSavedEvent(results)
             except:
                 yield regions.SaveRegionFailedEvent('Your region_code must be unique. Or Continent id and country id must be integers')
+        elif isinstance(event, regions.SaveRegionEvent):
+
+            try:
+                results = region_events.edit_region(self._conn, event)
+                yield regions.RegionSavedEvent(results)
+            except:
+                yield regions.SaveRegionFailedEvent('Your region_code must be unique. Or Continent id and country id must be integers')
+
 
 
 
