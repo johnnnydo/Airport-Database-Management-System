@@ -9,12 +9,15 @@ def search_country(connection, event):
     country_code = event._country_code
     country_name = event._name
     if country_name is not None and country_code is not None:
-        query = f'SELECT * FROM country WHERE "{country_code}" = country_code AND "{country_name}" = name;'
+        query = 'SELECT * FROM country WHERE country_code = ? AND name = ?'
+        params = (country_code, country_name)
     elif country_name is not None and country_code is None:
-        query = f'SELECT * FROM country WHERE "{country_name}" = name;'
+        query = 'SELECT * FROM country WHERE name = ?'
+        params = (country_name,)
     elif country_name is None and country_code is not None:
-        query = f'SELECT * FROM country WHERE "{country_code}" = country_code;'
-    cursor = connection.execute(query)
+        query = 'SELECT * FROM country WHERE country_code = ?'
+        params = (country_code,)
+    cursor = connection.execute(query, params)
     results = cursor.fetchall()
     cursor.close()
     return results
@@ -23,8 +26,9 @@ def load_country(connection, event):
     '''This function is going to use SELECT to load
     a existing country if the user wants to edit it'''
     country_id = event._country_id
-    query = f'SELECT * FROM country WHERE {country_id} = country_id;'
-    cursor = connection.execute(query)
+    query = 'SELECT * FROM country WHERE country_id = ?'
+    params = (country_id,)
+    cursor = connection.execute(query, params)
     results = cursor.fetchall()
     return results
 
@@ -78,9 +82,12 @@ def edited_country(connection, event):
     elif country_wiki is None:
         country_wiki = ''
     if country_keywords is not None:
-        query = f'UPDATE country SET country_code = "{country_code}", name = "{country_name}", continent_id = {continent_id}, wikipedia_link = "{country_wiki}", keywords = "{country_keywords}" WHERE country_id = {country_id};'
-        cursor = connection.execute(query)
+        query = 'UPDATE country SET country_code = ?, name = ?, continent_id = ?, wikipedia_link = ?, keywords = ? WHERE country_id = ?'
+        params = (
+        country_code, country_name, continent_id, country_wiki, country_keywords, country_id)
+        cursor = connection.execute(query, params)
     elif country_keywords is None:
-        query = f'UPDATE country SET country_code = "{country_code}", name = "{country_name}", continent_id = {continent_id}, wikipedia_link = "{country_wiki}", keywords = NULL WHERE country_id = {country_id};'
-        cursor = connection.execute(query)
+        query = 'UPDATE country SET country_code = ?, name = ?, continent_id = ?, wikipedia_link = ?, keywords = NULL WHERE country_id = ?'
+        params = (country_code, country_name, continent_id, country_wiki, country_id)
+        cursor = connection.execute(query, params)
     return country_namet
