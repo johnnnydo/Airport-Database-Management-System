@@ -31,7 +31,7 @@ class Engine:
 
     def __init__(self):
         """Initializes the engine"""
-        self._conn = sqlite3.connect('user', isolation_level = None)
+        self._conn = None
         self.path = None
 
 
